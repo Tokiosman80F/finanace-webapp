@@ -91,6 +91,28 @@ const displayMovements= function(movements){
 }
 displayMovements(account1.movements)
 
+// Current balance calculation
+const calDisplayBalance=(account)=>{
+  const balance = account.reduce((acc,cur)=>{
+    return acc+cur
+  },0)
+
+  labelBalance.textContent=`${balance} Euro`
+
+}
+
+console.log(calDisplayBalance(account1.movements));
+
+
+// user name creation
+const createUserNames=(accounts)=>{
+
+  accounts.forEach((user)=>{
+    user.username=user.owner.toLowerCase().split(' ').map((user)=>user[0]).join("")
+  })
+
+}
+createUserNames(accounts)
 
 
 
