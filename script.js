@@ -61,9 +61,6 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
-/////////////////////////////////////////////////
-/////////////////////////////////////////////////
-// LECTURES
 
 const currencies = new Map([
   ['USD', 'United States dollar'],
@@ -126,9 +123,7 @@ const calcDisplaySummary=(acc)=>{
 
 
 // login functionality
-// inputLoginUsername  inputLoginPin
-
-let currentUser
+let currentUser;
 btnLogin.addEventListener('click',function(e){
   e.preventDefault()
     currentUser=accounts.find((acc)=> acc.username===inputLoginUsername.value)
@@ -144,10 +139,7 @@ btnLogin.addEventListener('click',function(e){
     }else{
       alert("Invalid pass")
     }
-    // if pin is incorrect show alert and say wrong pin
-    // firstly the ui should be hidden on login the ui should be visible
-    //  show current balance ,summary according to user
-    
+  
     // movement 
     displayMovements(currentUser.movements)
     // balance
@@ -157,3 +149,19 @@ btnLogin.addEventListener('click',function(e){
     
 })
 
+// Close account functionality
+// inputClosePin inputCloseUsername
+btnClose.addEventListener('click',function(e){
+  e.preventDefault()
+
+  if(currentUser.username === inputCloseUsername.value && currentUser.pin===Number(inputClosePin.value))  
+  {
+    // find the index
+      const index=accounts.findIndex(acc=> acc.username===currentUser.username)
+      console.log(index);
+    // splice
+    accounts.splice(index,1)
+  }else console.log("no");
+
+  inputCloseUsername.value=inputClosePin.value=''
+})
