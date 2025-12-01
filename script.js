@@ -116,3 +116,20 @@ createUserNames(accounts)
 
 
 
+// calDisplaySummary 
+/**
+ * positive movement's sum : 1.filter out using greater > 0 then add them 2. using textcontent show themm
+ * sum of negative movement's : 1.filter out using less < 0 then add them 2. using textcontent show them
+ * */ 
+const calcDisplaySummary=(movements)=>{
+  const income=movements.filter((mov)=>mov>0).reduce((acc,cur)=>acc+cur,0)
+  const out=movements.filter((mov)=>mov<0).reduce((acc,cur)=>acc+cur,0)
+  // const interestAmount=movements.filter(desposite=> desposite>0).map(des=>des*1.2/100).reduce((acc,cur)=>acc+cur,0)
+  const interestAmount=income * 1.20/100;
+
+  labelSumIn.textContent=`${income} €`
+  labelSumOut.textContent=`${Math.abs(out)} €`
+  labelSumInterest.textContent=`${interestAmount}`
+
+}
+calcDisplaySummary(account1.movements)
