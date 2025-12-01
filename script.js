@@ -89,7 +89,7 @@ const displayMovements= function(movements){
   containerMovements.insertAdjacentHTML('afterbegin',html)
 })
 }
-displayMovements(account1.movements)
+
 
 // Current balance calculation
 const calDisplayBalance=(account)=>{
@@ -101,9 +101,6 @@ const calDisplayBalance=(account)=>{
 
 }
 
-console.log(calDisplayBalance(account1.movements));
-
-
 // user name creation
 const createUserNames=(accounts)=>{
 
@@ -114,22 +111,49 @@ const createUserNames=(accounts)=>{
 }
 createUserNames(accounts)
 
-
-
 // calDisplaySummary 
-/**
- * positive movement's sum : 1.filter out using greater > 0 then add them 2. using textcontent show themm
- * sum of negative movement's : 1.filter out using less < 0 then add them 2. using textcontent show them
- * */ 
-const calcDisplaySummary=(movements)=>{
-  const income=movements.filter((mov)=>mov>0).reduce((acc,cur)=>acc+cur,0)
-  const out=movements.filter((mov)=>mov<0).reduce((acc,cur)=>acc+cur,0)
-  // const interestAmount=movements.filter(desposite=> desposite>0).map(des=>des*1.2/100).reduce((acc,cur)=>acc+cur,0)
-  const interestAmount=income * 1.20/100;
+
+const calcDisplaySummary=(acc)=>{
+  const income=acc.movements.filter((mov)=>mov>0).reduce((acc,cur)=>acc+cur,0)
+  const out=acc.movements.filter((mov)=>mov<0).reduce((acc,cur)=>acc+cur,0)
+  const interestAmount=acc.movements.filter(desposite=> desposite>0).map(des=>des*`${acc.interestRate}`/100).reduce((acc,cur)=>acc+cur,0)
 
   labelSumIn.textContent=`${income} €`
   labelSumOut.textContent=`${Math.abs(out)} €`
   labelSumInterest.textContent=`${interestAmount}`
 
 }
-calcDisplaySummary(account1.movements)
+
+
+// login functionality
+// inputLoginUsername  inputLoginPin
+
+let currentUser
+btnLogin.addEventListener('click',function(e){
+  e.preventDefault()
+    currentUser=accounts.find((acc)=> acc.username===inputLoginUsername.value)
+    console.log(currentUser);
+
+    // username and pin 
+    if( currentUser?.pin===Number(inputLoginPin.value)){
+      console.log("logined");
+      labelWelcome.textContent=`Welcome back, ${currentUser.owner.split(" ")[0]}`
+      containerApp.style.opacity=100
+      inputLoginUsername.value=inputLoginPin.value=""
+      inputLoginPin.blur()
+    }else{
+      alert("Invalid pass")
+    }
+    // if pin is incorrect show alert and say wrong pin
+    // firstly the ui should be hidden on login the ui should be visible
+    //  show current balance ,summary according to user
+    
+    // movement 
+    displayMovements(currentUser.movements)
+    // balance
+    calDisplayBalance(currentUser.movements)
+    // summery
+    calcDisplaySummary(currentUser)
+    
+})
+
