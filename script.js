@@ -71,10 +71,17 @@ const currencies = new Map([
 const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
 
-const displayMovements= function(movements){
+const updateBalance=()=>{
+
+      displayMovements(currentUser)
+      calDisplayBalance(currentUser)
+      calcDisplaySummary(currentUser)
+}
+
+const displayMovements= function(acc){
  
   containerMovements.innerHTML=""
-  movements.forEach((movement,index)=>{
+  acc.movements.forEach((movement,index)=>{
   
   const type=movement>0 ? 'deposit' : 'withdrawal'
   const html=`<div class="movements__row">
@@ -90,11 +97,11 @@ const displayMovements= function(movements){
 
 // Current balance calculation
 const calDisplayBalance=(account)=>{
-  const balance = account.reduce((acc,cur)=>{
+   account.balance = account.movements.reduce((acc,cur)=>{
     return acc+cur
   },0)
 
-  labelBalance.textContent=`${balance} Euro`
+  labelBalance.textContent=`${account.balance} Euro`
 
 }
 
@@ -104,9 +111,9 @@ const createUserNames=(accounts)=>{
   accounts.forEach((user)=>{
     user.username=user.owner.toLowerCase().split(' ').map((user)=>user[0]).join("")
   })
-
 }
 createUserNames(accounts)
+
 
 // calDisplaySummary 
 
@@ -127,30 +134,69 @@ let currentUser;
 btnLogin.addEventListener('click',function(e){
   e.preventDefault()
     currentUser=accounts.find((acc)=> acc.username===inputLoginUsername.value)
-    console.log(currentUser);
 
     // username and pin 
-    if( currentUser?.pin===Number(inputLoginPin.value)){
-      console.log("logined");
+    if( currentUser && currentUser?.pin===Number(inputLoginPin.value)){
+  
       labelWelcome.textContent=`Welcome back, ${currentUser.owner.split(" ")[0]}`
-      containerApp.style.opacity=100
+      containerApp.style.opacity=1
+      
+     // displaying data after successful login 
+      // displayMovements(currentUser)
+      // calDisplayBalance(currentUser)
+      // calcDisplaySummary(currentUser)
+      updateBalance()
+
+
       inputLoginUsername.value=inputLoginPin.value=""
       inputLoginPin.blur()
+      // console.log(currentUser);
     }else{
       alert("Invalid pass")
     }
   
-    // movement 
-    displayMovements(currentUser.movements)
-    // balance
-    calDisplayBalance(currentUser.movements)
-    // summery
-    calcDisplaySummary(currentUser)
+    
     
 })
 
+
+
+// Transfer functionality 
+/**
+ * check if (input: transter to user) is valid or not 
+ * create a "balance" element inside the accounts 
+ * check if (input: amount ) balance is greater >0 ,if not aleart mesg : "insufficient balance"   
+ * Current User :if (input: amount ) is transfer , substract is from total balance and show it in the table 
+ * Receiver : added the transfer money in my balance
+ * */ 
+
+// inputTransferAmount inputTransferTo
+
+btnTransfer.addEventListener('click',function(e){
+  e.preventDefault()
+  const transferUser=accounts.find((acc)=>acc.username === inputTransferTo.value )
+  const transferAmount=Number(inputTransferAmount.value)
+  // console.log(transferUser,transferAmount,currentUser.balance);
+  
+  if( currentUser.username!==transferUser.username && transferUser?.username && transferAmount>0  && transferAmount<=currentUser.balance )
+  {
+    currentUser.movements.push(-transferAmount)
+    transferUser.movements.push(transferAmount)
+    console.log(currentUser);
+    console.log(transferUser);
+    updateBalance()
+
+    inputTransferAmount.value=inputTransferTo.value=''
+
+    
+  }else{
+    console.log("transfer failed");  
+  }
+
+  
+})
+
 // Close account functionality
-// inputClosePin inputCloseUsername
 btnClose.addEventListener('click',function(e){
   e.preventDefault()
 
@@ -158,7 +204,6 @@ btnClose.addEventListener('click',function(e){
   {
     // find the index
       const index=accounts.findIndex(acc=> acc.username===currentUser.username)
-      console.log(index);
     // splice
     accounts.splice(index,1)
   }else console.log("no");
