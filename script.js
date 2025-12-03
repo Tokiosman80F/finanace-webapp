@@ -186,13 +186,28 @@ btnTransfer.addEventListener('click',function(e){
     console.log(transferUser);
     updateBalance()
 
-    inputTransferAmount.value=inputTransferTo.value=''
-
+    
     
   }else{
     console.log("transfer failed");  
   }
+  
+  inputTransferAmount.value=inputTransferTo.value=''
+  
+})
 
+// Request Loan Functionality
+// inputLoanAmount
+btnLoan.addEventListener('click',function(e){
+  e.preventDefault()
+  
+  let amount=Number(inputLoanAmount.value)
+
+  if(amount>0 && currentUser.movements.some((mov)=> amount>mov*0.1))
+  {
+    currentUser.movements.push(amount)
+    updateBalance(currentUser)
+  }
   
 })
 
