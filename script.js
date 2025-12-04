@@ -1,9 +1,5 @@
 'use strict';
 
-/////////////////////////////////////////////////
-/////////////////////////////////////////////////
-// BANKIST APP
-
 // Data
 const account1 = {
   owner: 'Jonas Schmedtmann',
@@ -69,19 +65,22 @@ const currencies = new Map([
 ]);
 
 const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
+let sorted=false
+
+console.log("Global Sort:",sorted);
 
 
 const updateBalance=()=>{
 
-      displayMovements(currentUser)
+      displayMovements(currentUser.movements)
       calDisplayBalance(currentUser)
       calcDisplaySummary(currentUser)
 }
 
-const displayMovements= function(acc){
+const displayMovements= function(movements,sorted=false){
  
   containerMovements.innerHTML=""
-  acc.movements.forEach((movement,index)=>{
+  movements.forEach((movement,index)=>{
   
   const type=movement>0 ? 'deposit' : 'withdrawal'
   const html=`<div class="movements__row">
@@ -210,6 +209,31 @@ btnLoan.addEventListener('click',function(e){
   }
   
 })
+
+// sorting functionality
+
+/**
+ * global variable toggle hbe
+ * 
+*/
+btnSort.addEventListener('click',function(){
+  
+  sorted=!sorted
+  console.log("Sort 1:",sorted);
+  
+  console.log("Before:",currentUser.movements);
+  
+  const sortedMov=currentUser.movements.slice().sort((a,b)=>a-b)
+  
+  if(sorted){
+    displayMovements(sortedMov)
+  }
+  else{
+    displayMovements(currentUser.movements)
+  }
+  console.log("sort 2:",sorted);
+  
+}) 
 
 // Close account functionality
 btnClose.addEventListener('click',function(e){
