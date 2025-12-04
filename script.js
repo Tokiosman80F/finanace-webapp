@@ -3,14 +3,34 @@
 // Data
 const account1 = {
   owner: 'Jonas Schmedtmann',
-  movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
-  interestRate: 1.2, // %
+  movements: [200.50, 450, -400, 3000, -650, -130, 70, 1300],
+  movementsDates: [
+    '2019-11-18T21:31:17.178Z',
+    '2019-12-23T07:42:02.383Z',
+    '2020-01-28T09:15:04.904Z',
+    '2020-04-01T10:17:24.185Z',
+    '2020-05-08T14:11:59.604Z',
+    '2023-07-26T17:01:17.194Z',
+    '2024-10-11T23:36:17.929Z',
+    '2025-12-04T10:51:36.790Z',
+  ],
+  interestRate: 1.2,
   pin: 1111,
 };
 
 const account2 = {
   owner: 'Jessica Davis',
   movements: [5000, 3400, -150, -790, -3210, -1000, 8500, -30],
+  movementsDates: [
+    '2019-11-01T13:15:33.035Z',
+    '2019-11-30T09:48:16.867Z',
+    '2019-12-25T06:04:23.907Z',
+    '2020-01-25T14:18:46.235Z',
+    '2020-02-05T16:33:06.386Z',
+    '2020-04-10T14:43:26.374Z',
+    '2023-10-13T18:49:59.371Z',
+    '2024-03-23T12:01:20.894Z',
+  ],
   interestRate: 1.5,
   pin: 2222,
 };
@@ -18,6 +38,16 @@ const account2 = {
 const account3 = {
   owner: 'Steven Thomas Williams',
   movements: [200, -200, 340, -300, -20, 50, 400, -460],
+  movementsDates: [
+    '2019-11-18T21:31:17.178Z',
+    '2019-12-23T07:42:02.383Z',
+    '2020-01-28T09:15:04.904Z',
+    '2020-04-01T10:17:24.185Z',
+    '2020-05-08T14:11:59.604Z',
+    '2023-05-26T17:01:17.194Z',
+    '2024-08-11T23:36:17.929Z',
+    '2025-01-04T10:51:36.790Z',
+  ],
   interestRate: 0.7,
   pin: 3333,
 };
@@ -25,6 +55,13 @@ const account3 = {
 const account4 = {
   owner: 'Sarah Smith',
   movements: [430, 1000, 700, 50, 90],
+  movementsDates: [
+    '2019-11-01T13:15:33.035Z',
+    '2019-11-30T09:48:16.867Z',
+    '2020-12-25T06:04:23.907Z',
+    '2022-05-25T14:18:46.235Z',
+    '2023-02-05T16:33:06.386Z',
+  ],
   interestRate: 1,
   pin: 4444,
 };
@@ -67,25 +104,43 @@ const currencies = new Map([
 const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 let sorted=false
 
-console.log("Global Sort:",sorted);
+const now=new Date() 
+const options={
+  day:'2-digit', 
+  month:'2-digit', 
+  year:'2-digit', 
+  hour:'2-digit', 
+  minute:'2-digit',
+  hour12: true,
+}
 
+labelDate.textContent=new Intl.DateTimeFormat(navigator.language,options).format(now)
 
 const updateBalance=()=>{
 
-      displayMovements(currentUser.movements)
+      displayMovements(currentUser)
       calDisplayBalance(currentUser)
       calcDisplaySummary(currentUser)
 }
 
-const displayMovements= function(movements,sorted=false){
+const displayMovements= function(acc){
  
   containerMovements.innerHTML=""
-  movements.forEach((movement,index)=>{
+
   
+  acc.movements.forEach((movement,index)=>{
+    
+    const date = new Date(acc.movementsDates[index])
+    const formateDate=new Intl.DateTimeFormat(navigator.language,{
+      day:'2-digit',
+      month:'2-digit',
+      year:'2-digit',
+    } ).format(date)
+
   const type=movement>0 ? 'deposit' : 'withdrawal'
   const html=`<div class="movements__row">
           <div class="movements__type movements__type--${type}">${index+1} ${type} </div>
-          <div class="movements__date">3 days ago</div>
+          <div class="movements__date">${formateDate}</div>
           <div class="movements__value">${movement}</div>
         </div>`
  
@@ -122,8 +177,8 @@ const calcDisplaySummary=(acc)=>{
   const interestAmount=acc.movements.filter(desposite=> desposite>0).map(des=>des*`${acc.interestRate}`/100).reduce((acc,cur)=>acc+cur,0)
 
   labelSumIn.textContent=`${income} €`
-  labelSumOut.textContent=`${Math.abs(out)} €`
-  labelSumInterest.textContent=`${interestAmount}`
+  labelSumOut.textContent=`${(out)} €`
+  labelSumInterest.textContent=`${interestAmount.toFixed(2)} €` 
 
 }
 
@@ -139,11 +194,6 @@ btnLogin.addEventListener('click',function(e){
   
       labelWelcome.textContent=`Welcome back, ${currentUser.owner.split(" ")[0]}`
       containerApp.style.opacity=1
-      
-     // displaying data after successful login 
-      // displayMovements(currentUser)
-      // calDisplayBalance(currentUser)
-      // calcDisplaySummary(currentUser)
       updateBalance()
 
 
@@ -161,16 +211,6 @@ btnLogin.addEventListener('click',function(e){
 
 
 // Transfer functionality 
-/**
- * check if (input: transter to user) is valid or not 
- * create a "balance" element inside the accounts 
- * check if (input: amount ) balance is greater >0 ,if not aleart mesg : "insufficient balance"   
- * Current User :if (input: amount ) is transfer , substract is from total balance and show it in the table 
- * Receiver : added the transfer money in my balance
- * */ 
-
-// inputTransferAmount inputTransferTo
-
 btnTransfer.addEventListener('click',function(e){
   e.preventDefault()
   const transferUser=accounts.find((acc)=>acc.username === inputTransferTo.value )
@@ -179,8 +219,15 @@ btnTransfer.addEventListener('click',function(e){
   
   if( currentUser.username!==transferUser.username && transferUser?.username && transferAmount>0  && transferAmount<=currentUser.balance )
   {
+    const date = new Date().toISOString()
+    
+
     currentUser.movements.push(-transferAmount)
+    currentUser.movementsDates.push(date)
+
     transferUser.movements.push(transferAmount)
+    transferUser.movementsDates.push(date)
+    
     console.log(currentUser);
     console.log(transferUser);
     updateBalance()
@@ -196,7 +243,6 @@ btnTransfer.addEventListener('click',function(e){
 })
 
 // Request Loan Functionality
-// inputLoanAmount
 btnLoan.addEventListener('click',function(e){
   e.preventDefault()
   
@@ -204,18 +250,16 @@ btnLoan.addEventListener('click',function(e){
 
   if(amount>0 && currentUser.movements.some((mov)=> amount>mov*0.1))
   {
+    const date = new Date().toISOString()
+
     currentUser.movements.push(amount)
+    currentUser.movementsDates.push(date)
     updateBalance(currentUser)
   }
   
 })
 
 // sorting functionality
-
-/**
- * global variable toggle hbe
- * 
-*/
 btnSort.addEventListener('click',function(){
   
   sorted=!sorted
@@ -229,7 +273,7 @@ btnSort.addEventListener('click',function(){
     displayMovements(sortedMov)
   }
   else{
-    displayMovements(currentUser.movements)
+    displayMovements(currentUser)
   }
   console.log("sort 2:",sorted);
   
