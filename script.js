@@ -122,15 +122,15 @@ const dateFomatter = dateStr => {
   const today = new Date();
   const transactionDate = new Date(dateStr);
   const dateDifference = Math.abs(today - transactionDate); // return in mili second
-  const second =Math.floor(dateDifference/1000)
-  const minute =Math.floor(dateDifference/1000*60)
-  const hour =Math.floor(dateDifference/1000*60*60)
-  const dayPassed = Math.round((dateDifference / 1000) * 60 * 60 * 24); // return in days
+  const second =Math.floor(dateDifference / 1000)
+  const minute =Math.floor(dateDifference / (1000 * 60))
+  const hour =Math.floor(dateDifference / ( 1000 * 60 * 60))
+  const dayPassed = Math.round(dateDifference / (1000 * 60 * 60 * 24)) // return in days
 
   console.log("The day passed:",dayPassed);
   if(second<10) return `Just Now`
   if(second<60) return `Few second ago`
-  if(minute<60) return `${minute} ago`
+  if(minute<60) return `${minute} minutes ago`
   if(hour<6) return `${hour} ago`
   if(hour<24) return `Today`
   if (dayPassed <= 7) return `${dayPassed} day ago`;
