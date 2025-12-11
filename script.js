@@ -1,6 +1,6 @@
 'use strict';
 
-// Data
+// data
 const account1 = {
   owner: 'Jonas Schmedtmann',
   movements: [200.5, 450, -400, 3000, -650, -130, 70, 1300],
@@ -16,6 +16,8 @@ const account1 = {
   ],
   interestRate: 1.2,
   pin: 1111,
+  currency: 'EUR',
+  locale: 'pt-PT',
 };
 
 const account2 = {
@@ -33,6 +35,8 @@ const account2 = {
   ],
   interestRate: 1.5,
   pin: 2222,
+  currency: 'USD',
+  locale: 'en-US',
 };
 
 const account3 = {
@@ -50,6 +54,8 @@ const account3 = {
   ],
   interestRate: 0.7,
   pin: 3333,
+  currency: 'GBP',
+  locale: 'en-GB',
 };
 
 const account4 = {
@@ -64,7 +70,10 @@ const account4 = {
   ],
   interestRate: 1,
   pin: 4444,
+  currency: 'EUR',
+  locale: 'de-DE',
 };
+
 
 const accounts = [account1, account2, account3, account4];
 
@@ -102,6 +111,27 @@ const currencies = new Map([
 
 const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 let sorted = false;
+
+const startLogTimer=()=>{
+  time=10
+  const tick=()=>{
+    const minutes=String(Math.floor(time/60)).padStart(2,0);
+    const second=String(Math.floor(time%60)).padStart(2,0);
+    labelTimer.textContent=`${minutes}:${second}`
+    console.log(time);
+    
+    if (time===0) {
+      clearInterval(timer);
+      labelWelcome.textContent= 'Log in to get started'
+      containerApp.style.opacity=0
+    } 
+    time--  
+  }
+
+  tick()
+  const timer=setInterval(tick,1000)
+  return timer
+}
 
 const now = new Date();
 const options = {
@@ -146,7 +176,14 @@ const dateFomatter = dateStr => {
     return formateDate
 };
 
+const formateCurrency=(locale,cur,mov)=> new Intl.NumberFormat(locale,{style:"currency",currency:`${cur}`}).format(mov)
+// const currencyFormatter=curr=>{
+//   return new Intl.NumberFormat()
+// }
+
 const updateBalance = () => {
+  clearInterval(timer)
+  timer = startLogTimer()
   displayMovements(currentUser);
   calDisplayBalance(currentUser);
   calcDisplaySummary(currentUser);
@@ -157,10 +194,9 @@ const displayMovements = function (acc) {
 
   acc.movements.forEach((movement, index) => {
     const date = new Date(acc.movementsDates[index]);
-
-    
     const formateDate=dateFomatter(date)
   
+  const formateMovement= formateCurrency(acc.locale,acc.currency ,movement)
 
     const type = movement > 0 ? 'deposit' : 'withdrawal';
     const html = `<div class="movements__row">
@@ -168,7 +204,7 @@ const displayMovements = function (acc) {
       index + 1
     } ${type} </div>
           <div class="movements__date">${formateDate}</div>
-          <div class="movements__value">${movement}</div>
+          <div class="movements__value">${formateMovement}</div>
         </div>`;
 
     containerMovements.insertAdjacentHTML('afterbegin', html);
@@ -181,7 +217,7 @@ const calDisplayBalance = account => {
     return acc + cur;
   }, 0);
 
-  labelBalance.textContent = `${account.balance} Euro`;
+  labelBalance.textContent = `${formateCurrency(account.locale,account.currency ,account.balance)}`;
 };
 
 // user name creation
@@ -210,13 +246,13 @@ const calcDisplaySummary = acc => {
     .map(des => (des * `${acc.interestRate}`) / 100)
     .reduce((acc, cur) => acc + cur, 0);
 
-  labelSumIn.textContent = `${income} €`;
-  labelSumOut.textContent = `${out} €`;
-  labelSumInterest.textContent = `${interestAmount.toFixed(2)} €`;
+  labelSumIn.textContent = `${formateCurrency(acc.locale,acc.currency,income)} `;
+  labelSumOut.textContent = `${formateCurrency(acc.locale,acc.currency,out)} `;
+  labelSumInterest.textContent = `${formateCurrency(acc.locale,acc.currency,interestAmount.toFixed(2))} `;
 };
 
 // login functionality
-let currentUser;
+let currentUser, timer,time;
 btnLogin.addEventListener('click', function (e) {
   e.preventDefault();
   currentUser = accounts.find(acc => acc.username === inputLoginUsername.value);
@@ -231,6 +267,9 @@ btnLogin.addEventListener('click', function (e) {
 
     inputLoginUsername.value = inputLoginPin.value = '';
     inputLoginPin.blur();
+    
+    if(timer) clearInterval(timer)
+    timer = startLogTimer()
     // console.log(currentUser);
   } else {
     alert('Invalid pass');
@@ -320,3 +359,4 @@ btnClose.addEventListener('click', function (e) {
 
   inputCloseUsername.value = inputClosePin.value = '';
 });
+
