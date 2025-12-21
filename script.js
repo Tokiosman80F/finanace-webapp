@@ -27,8 +27,6 @@ const closeModal = function () {
   overlay.classList.add('hidden');
 };
 
-// for (let i = 0; i < btnsOpenModal.length; i++)
-
 
 btnsOpenModal.forEach(btn=>btn.addEventListener('click', openModal)) 
 
@@ -56,6 +54,31 @@ document.querySelector('.nav__links').addEventListener("click",function(e){
     let id=e.target.getAttribute('href')
     document.querySelector(id).scrollIntoView({behavior:'smooth'})
   }
+})
+
+
+// Tab components
+const tabs=document.querySelectorAll('.operations__tab')
+const tabContainer=document.querySelector('.operations__tab-container')
+const tabContent=document.querySelectorAll('.operations__content')
+
+// Using event delegation
+tabContainer.addEventListener('click',function(e){
+  const clicked = e.target.closest('.operations__tab');
+  console.log(clicked);
+  console.log(clicked.dataset.tab);
+
+  if(!clicked) return
+
+  // remove active class
+  tabs.forEach((tab)=>tab.classList.remove("operations__tab--active"))
+  tabContent.forEach((content)=>content.classList.remove("operations__content--active"))
+
+  // activate tab
+  clicked.classList.add("operations__tab--active")
+  // activate content
+  document.querySelector(`.operations__content--${clicked.dataset.tab}`).classList.add('operations__content--active')
+  
 })
 
 
