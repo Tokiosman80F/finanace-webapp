@@ -9,6 +9,8 @@ const btnCloseModal = document.querySelector('.btn--close-modal');
 const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
 const btnToScroll=document.querySelector('.btn--scroll-to');
 const section1=document.querySelector('#section--1')
+const section2=document.querySelector('#section--2')
+const section3=document.querySelector('#section--3')
 
 console.log("section",section1);
 
@@ -28,7 +30,7 @@ const closeModal = function () {
 // for (let i = 0; i < btnsOpenModal.length; i++)
 
 
-  btnsOpenModal.forEach(btn=>btn.addEventListener('click', openModal)) 
+btnsOpenModal.forEach(btn=>btn.addEventListener('click', openModal)) 
 
 btnCloseModal.addEventListener('click', closeModal);
 overlay.addEventListener('click', closeModal);
@@ -41,6 +43,26 @@ document.addEventListener('keydown', function (e) {
 });
 
 btnToScroll.addEventListener("click",function(){
-  
       section1.scrollIntoView({behavior:"smooth"})
 })
+
+document.querySelector('.nav__links').addEventListener("click",function(e){
+      
+  e.preventDefault();
+
+  // Match pattern
+  if(e.target.classList.contains('nav__link'))
+    {
+    let id=e.target.getAttribute('href')
+    document.querySelector(id).scrollIntoView({behavior:'smooth'})
+  }
+})
+
+
+// const h1 = document.querySelector('.header__title');
+
+// const showAlret=function(){
+//   alert("hey")
+//   h1.removeEventListener('mouseenter',showAlret)
+// }
+// h1.addEventListener('mouseenter',showAlret)
