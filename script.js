@@ -81,6 +81,27 @@ tabContainer.addEventListener('click',function(e){
   
 })
 
+// menu fade animation
+const nav=document.querySelector('.nav')
+
+const handleNavHover=(e,opacity)=>{
+  if(e.target.classList.contains('nav__link')){
+    const link=e.target
+    const sibiling=link.closest('.nav__links').querySelectorAll('.nav__link')
+    const logo=link.closest('.nav').querySelector('img')
+
+    // select all sibiling and make them fade out ,expect the select one 
+    sibiling.forEach(el=>{
+      if(el!==link) el.style.opacity=opacity
+    })
+    logo.style.opacity=opacity
+  }
+  
+}
+
+nav.addEventListener('mouseover',(e)=>{handleNavHover(e,0.5)})
+nav.addEventListener('mouseout',(e)=>{handleNavHover(e,1)})
+
 
 // const h1 = document.querySelector('.header__title');
 
