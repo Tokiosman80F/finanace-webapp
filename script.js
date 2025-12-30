@@ -12,6 +12,45 @@ const section1 = document.querySelector('#section--1')
 const section2 = document.querySelector('#section--2')
 const section3 = document.querySelector('#section--3')
 
+// Slider components
+const slides = document.querySelectorAll('.slide')
+const btnLeft = document.querySelector('.slider__btn--left')
+const btnRight = document.querySelector('.slider__btn--right')
+
+let currentSlide = 0
+const maxSlide = slides.length
+
+
+const goToSlider = (slideNumber) => {
+  slides.forEach((slide, index) => {
+    slide.style.transform = `translateX(${ (index - slideNumber) * 100}%)`
+  })
+}
+goToSlider(0)
+
+const previousSlide = () => {
+  if (currentSlide === 0) {
+    currentSlide = maxSlide-1
+  }else{
+    currentSlide--
+  }
+  goToSlider(currentSlide)
+}
+
+const nextSlide = () => {
+  if (currentSlide === maxSlide - 1) {
+    currentSlide = 0
+  }else{
+    currentSlide++
+  }
+  goToSlider(currentSlide)
+}
+
+btnRight.addEventListener('click', nextSlide)
+btnLeft.addEventListener('click', previousSlide)
+
+
+
 console.log("section", section1);
 
 // console.log("nodelist:",btnsOpenModal);
@@ -125,21 +164,21 @@ headerObserver.observe(header)
 // reveal section 
 const allSection = document.querySelectorAll('.section')
 
-const revealSection=(entries,observer)=>{
-  const [enter]=entries
+const revealSection = (entries, observer) => {
+  const [enter] = entries
   // console.log("enter:",enter);
-  
-  if(!enter.isIntersecting) return
-  
+
+  if (!enter.isIntersecting) return
+
   enter.target.classList.remove('section--hidden')
 
-  observer.unobserve(enter.target) 
+  observer.unobserve(enter.target)
 
 }
 
 const sectionObserver = new IntersectionObserver(revealSection, {
-  root:null,
-  threshold:0.15
+  root: null,
+  threshold: 0.15
 })
 
 allSection.forEach((section) => {
@@ -148,16 +187,16 @@ allSection.forEach((section) => {
 })
 
 // lazy loading image
-const allImg=document.querySelectorAll('img[data-src]')
+const allImg = document.querySelectorAll('img[data-src]')
 
-const lazyImg=(enteries,observer)=>{
-  const [enter]=enteries
+const lazyImg = (enteries, observer) => {
+  const [enter] = enteries
   // replacing src with data-src
-  if(!enter.isIntersecting) return
+  if (!enter.isIntersecting) return
   // console.log(enter);
-  enter.target.src=enter.target.dataset.src
+  enter.target.src = enter.target.dataset.src
 
-  enter.target.addEventListener('load',function(){
+  enter.target.addEventListener('load', function () {
     enter.target.classList.remove('lazy-img')
   })
 
@@ -165,13 +204,13 @@ const lazyImg=(enteries,observer)=>{
 
 }
 
-const imgObserver=new IntersectionObserver(lazyImg,{
-  root:null,
-  threshold:0.15,
-  rootMargin:'200px',
+const imgObserver = new IntersectionObserver(lazyImg, {
+  root: null,
+  threshold: 0.15,
+  rootMargin: '200px',
 })
 
-allImg.forEach((img)=>imgObserver.observe(img))
+allImg.forEach((img) => imgObserver.observe(img))
 
 
 // const h1 = document.querySelector('.header__title');
