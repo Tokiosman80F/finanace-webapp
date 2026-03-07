@@ -97,10 +97,10 @@ document.addEventListener('keydown', function (e) {
 
 sliderComponent()
 
-// console.log("section", section1);
 
 
 
+// Modal conponent
 const openModal = function () {
   modal.classList.remove('hidden');
   overlay.classList.remove('hidden');
@@ -124,6 +124,7 @@ document.addEventListener('keydown', function (e) {
   }
 });
 
+// smooth scroll 
 btnToScroll.addEventListener("click", function () {
   section1.scrollIntoView({ behavior: "smooth" })
 })

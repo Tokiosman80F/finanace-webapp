@@ -177,9 +177,6 @@ const dateFomatter = dateStr => {
 };
 
 const formateCurrency=(locale,cur,mov)=> new Intl.NumberFormat(locale,{style:"currency",currency:`${cur}`}).format(mov)
-// const currencyFormatter=curr=>{
-//   return new Intl.NumberFormat()
-// }
 
 const updateBalance = () => {
   clearInterval(timer)
