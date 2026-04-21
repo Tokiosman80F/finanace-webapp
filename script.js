@@ -258,43 +258,45 @@ const LazyLoadComponent = (function () {
   return { init };
 })();
 
-// Slider components
-
-const sliderComponent = () => {
+//===================================
+// SLIDER COMPONENT
+//===================================
+const SliderComponent = (function () {
   const slides = document.querySelectorAll('.slide');
   const btnLeft = document.querySelector('.slider__btn--left');
   const btnRight = document.querySelector('.slider__btn--right');
   const dotContainer = document.querySelector('.dots');
+
   const maxSlide = slides.length;
   let currentSlide = 0;
 
   // function
-  const goToSlider = slideNumber => {
-    slides.forEach((slide, index) => {
-      slide.style.transform = `translateX(${(index - slideNumber) * 100}%)`;
+  function goToSlider(slideNumber) {
+    slides.forEach((slide, i) => {
+      slide.style.transform = `translateX(${(i - slideNumber) * 100}%)`;
     });
-  };
+  }
 
-  const createDot = () => {
-    slides.forEach((_, index) => {
+  function createDot() {
+    slides.forEach((_, i) => {
       dotContainer.insertAdjacentHTML(
         'beforeend',
-        `<button class="dots__dot" data-slide="${index}"></button>`,
+        `<button class="dots__dot" data-slide="${i}"></button>`,
       );
     });
-  };
+  }
 
-  const activateDot = currentSlide => {
-    document.querySelectorAll('.dots__dot').forEach((dot, index) => {
+  function activateDot(currentSlide) {
+    document.querySelectorAll('.dots__dot').forEach(dot => {
       dot.classList.remove('dots__dot--active');
     });
 
     document
       .querySelector(`.dots__dot[data-slide="${currentSlide}"]`)
       .classList.add('dots__dot--active');
-  };
+  }
 
-  const previousSlide = () => {
+  function prevSlide() {
     if (currentSlide === 0) {
       currentSlide = maxSlide - 1;
     } else {
@@ -302,9 +304,9 @@ const sliderComponent = () => {
     }
     goToSlider(currentSlide);
     activateDot(currentSlide);
-  };
+  }
 
-  const nextSlide = () => {
+  function nextSlide() {
     if (currentSlide === maxSlide - 1) {
       currentSlide = 0;
     } else {
@@ -312,35 +314,40 @@ const sliderComponent = () => {
     }
     goToSlider(currentSlide);
     activateDot(currentSlide);
-  };
+  }
 
-  // init function
-  const init = () => {
+  // Init function
+  function init() {
+    if (!slides.length || !btnLeft || !btnRight || !dotContainer) return;
+
+    // setup
     goToSlider(0);
     createDot();
     activateDot(0);
-  };
-  init();
 
-  // Event listener
-  btnRight.addEventListener('click', nextSlide);
-  btnLeft.addEventListener('click', previousSlide);
+    // Button clicks
+    btnRight.addEventListener('click', nextSlide);
+    btnLeft.addEventListener('click', prevSlide);
 
-  // dot event
-  dotContainer.addEventListener('click', function (e) {
-    if (e.target.classList.contains('dots__dot')) {
-      const { slide } = e.target.dataset;
-      goToSlider(slide);
-    }
-  });
-  //  keyboard event
-  document.addEventListener('keydown', function (e) {
-    e.key === 'ArrowRight' && nextSlide();
-    e.key === 'ArrowLeft' && previousSlide();
-  });
-};
+    // Dot clicks
+    dotContainer.addEventListener('click', function (e) {
+      if (e.target.classList.contains('dots__dot')) {
+        const { slide } = e.target.dataset;
+        goToSlider(slide);
+      }
+    });
 
-sliderComponent();
+    //  keyboard arrow
+    document.addEventListener('keydown', function (e) {
+      e.key === 'ArrowRight' && nextSlide();
+      e.key === 'ArrowLeft' && prevSlide();
+    });
+  }
+
+  return { init };
+})();
+
+// Event listener
 
 //===================================
 // APP - signle entry point that start everything
@@ -353,5 +360,6 @@ function App() {
   StickyNavBarComponent.init();
   SectionRevealComponent.init();
   LazyLoadComponent.init();
+  SliderComponent.init();
 }
 App();
