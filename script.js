@@ -1,7 +1,5 @@
 'use strict';
 
-const btnToScroll = document.querySelector('.btn--scroll-to');
-const section1 = document.querySelector('#section--1');
 const section2 = document.querySelector('#section--2');
 const section3 = document.querySelector('#section--3');
 
@@ -37,6 +35,37 @@ const ModalComponent = (function () {
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
         closeModal();
+      }
+    });
+  }
+
+  return { init };
+})();
+
+//===================================
+// SMOOTHSCROLL COMPONENT
+//===================================
+
+const SmoothScrollComponent = (function () {
+  // Element
+  const btnToScroll = document.querySelector('.btn--scroll-to');
+  const section1 = document.querySelector('#section--1');
+  const navLinks = document.querySelector('.nav__links');
+
+  function init() {
+    if (!btnToScroll || !section1 || !navLinks) return;
+
+    btnToScroll.addEventListener('click', function () {
+      section1.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    navLinks.addEventListener('click', function (e) {
+      e.preventDefault();
+
+      // Match pattern
+      if (e.target.classList.contains('nav__link')) {
+        let id = e.target.getAttribute('href');
+        document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
       }
     });
   }
@@ -129,21 +158,6 @@ const sliderComponent = () => {
 sliderComponent();
 
 // Modal conponent
-
-// smooth scroll
-btnToScroll.addEventListener('click', function () {
-  section1.scrollIntoView({ behavior: 'smooth' });
-});
-
-document.querySelector('.nav__links').addEventListener('click', function (e) {
-  e.preventDefault();
-
-  // Match pattern
-  // if (e.target.classList.contains('nav__link')) {
-  //   let id = e.target.getAttribute('href');
-  //   document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
-  // }
-});
 
 // Tab components
 const tabs = document.querySelectorAll('.operations__tab');
@@ -267,5 +281,6 @@ allImg.forEach(img => imgObserver.observe(img));
 //===================================
 function App() {
   ModalComponent.init();
+  SmoothScrollComponent.init();
 }
 App();
