@@ -43,7 +43,7 @@ const ModalComponent = (function () {
 })();
 
 //===================================
-// SMOOTHSCROLL COMPONENT
+// SMOOTH SCROLL COMPONENT
 //===================================
 
 const SmoothScrollComponent = (function () {
@@ -67,6 +67,45 @@ const SmoothScrollComponent = (function () {
         let id = e.target.getAttribute('href');
         document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
       }
+    });
+  }
+
+  return { init };
+})();
+
+//===================================
+// TAB COMPONENT
+//===================================
+
+const TabComponent = (function () {
+  // Element
+  const tabs = document.querySelectorAll('.operations__tab');
+  const tabContainer = document.querySelector('.operations__tab-container');
+  const tabContent = document.querySelectorAll('.operations__content');
+
+  function init() {
+    if (!tabContainer) return;
+
+    // Using event delegation
+    tabContainer.addEventListener('click', function (e) {
+      const clicked = e.target.closest('.operations__tab');
+      console.log(clicked);
+      console.log(clicked.dataset.tab);
+
+      if (!clicked) return;
+
+      // remove active class
+      tabs.forEach(tab => tab.classList.remove('operations__tab--active'));
+      tabContent.forEach(content =>
+        content.classList.remove('operations__content--active'),
+      );
+
+      // activate tab
+      clicked.classList.add('operations__tab--active');
+      // activate content
+      document
+        .querySelector(`.operations__content--${clicked.dataset.tab}`)
+        .classList.add('operations__content--active');
     });
   }
 
@@ -160,31 +199,6 @@ sliderComponent();
 // Modal conponent
 
 // Tab components
-const tabs = document.querySelectorAll('.operations__tab');
-const tabContainer = document.querySelector('.operations__tab-container');
-const tabContent = document.querySelectorAll('.operations__content');
-
-// Using event delegation
-tabContainer.addEventListener('click', function (e) {
-  const clicked = e.target.closest('.operations__tab');
-  console.log(clicked);
-  console.log(clicked.dataset.tab);
-
-  if (!clicked) return;
-
-  // remove active class
-  tabs.forEach(tab => tab.classList.remove('operations__tab--active'));
-  tabContent.forEach(content =>
-    content.classList.remove('operations__content--active'),
-  );
-
-  // activate tab
-  clicked.classList.add('operations__tab--active');
-  // activate content
-  document
-    .querySelector(`.operations__content--${clicked.dataset.tab}`)
-    .classList.add('operations__content--active');
-});
 
 // menu fade animation
 const nav = document.querySelector('.nav');
@@ -282,5 +296,6 @@ allImg.forEach(img => imgObserver.observe(img));
 function App() {
   ModalComponent.init();
   SmoothScrollComponent.init();
+  TabComponent.init();
 }
 App();
