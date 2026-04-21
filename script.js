@@ -150,6 +150,38 @@ const NavFadeComponent = (function () {
   return { init };
 })();
 
+//===================================
+// STICKY NAVBAR COMPONENT
+//===================================
+
+const StickyNavBarComponent = (function () {
+  // Element: sticky nav bar => intersection observer API
+  const nav = document.querySelector('.nav');
+  const header = document.querySelector('.header');
+
+  function onHeaderLeave(entries) {
+    const entry = entries[0];
+    if (!entry.isIntersecting) {
+      nav.classList.add('sticky');
+    } else {
+      nav.classList.remove('sticky');
+    }
+  }
+
+  function init() {
+    if (!nav || !header) return;
+    const navHeight = nav.getBoundingClientRect().height;
+
+    const observer = new IntersectionObserver(stickyNav, {
+      root: null,
+      threshold: 0,
+      rootMargin: `-${navHeight}px`,
+    });
+    observer.observe(header);
+  }
+
+  return { init };
+})();
 // Slider components
 
 const sliderComponent = () => {
@@ -236,23 +268,12 @@ sliderComponent();
 
 // menu fade animation
 
-// sticky nav bar => intersection observer API
-const header = document.querySelector('.header');
-const navHeight = nav.getBoundingClientRect().height;
-
 const stickyNav = entries => {
   const [enter] = entries;
   // console.log(enter);
   if (!enter.isIntersecting) nav.classList.add('sticky');
   else nav.classList.remove('sticky');
 };
-
-const headerObserver = new IntersectionObserver(stickyNav, {
-  root: null,
-  threshold: 0,
-  rootMargin: `-${navHeight}px`,
-});
-headerObserver.observe(header);
 
 // reveal section
 const allSection = document.querySelectorAll('.section');
@@ -311,5 +332,6 @@ function App() {
   SmoothScrollComponent.init();
   TabComponent.init();
   NavFadeComponent.init();
+  StickyNavBarComponent.init();
 }
 App();
