@@ -1,5 +1,5 @@
 'use strict';
-
+const nav = document.querySelector('.nav');
 const section2 = document.querySelector('#section--2');
 const section3 = document.querySelector('#section--3');
 
@@ -112,6 +112,44 @@ const TabComponent = (function () {
   return { init };
 })();
 
+//===================================
+// NAV FADE COMPONENT
+//===================================
+
+const NavFadeComponent = (function () {
+  // element
+  const nav = document.querySelector('.nav');
+
+  function handleNavHover(e, opacity) {
+    if (e.target.classList.contains('nav__link')) {
+      const link = e.target;
+      const sibiling = link
+        .closest('.nav__links')
+        .querySelectorAll('.nav__link');
+      const logo = link.closest('.nav').querySelector('img');
+
+      // select all sibiling and make them fade out ,expect the select one
+      sibiling.forEach(el => {
+        if (el !== link) el.style.opacity = opacity;
+      });
+      logo.style.opacity = opacity;
+    }
+  }
+
+  function init() {
+    if (!nav) return;
+
+    nav.addEventListener('mouseover', e => {
+      handleNavHover(e, 0.5);
+    });
+    nav.addEventListener('mouseout', e => {
+      handleNavHover(e, 1);
+    });
+  }
+
+  return { init };
+})();
+
 // Slider components
 
 const sliderComponent = () => {
@@ -196,32 +234,7 @@ const sliderComponent = () => {
 
 sliderComponent();
 
-// Modal conponent
-
-// Tab components
-
 // menu fade animation
-const nav = document.querySelector('.nav');
-
-const handleNavHover = (e, opacity) => {
-  if (e.target.classList.contains('nav__link')) {
-    const link = e.target;
-    const sibiling = link.closest('.nav__links').querySelectorAll('.nav__link');
-    const logo = link.closest('.nav').querySelector('img');
-
-    // select all sibiling and make them fade out ,expect the select one
-    sibiling.forEach(el => {
-      if (el !== link) el.style.opacity = opacity;
-    });
-    logo.style.opacity = opacity;
-  }
-};
-nav.addEventListener('mouseover', e => {
-  handleNavHover(e, 0.5);
-});
-nav.addEventListener('mouseout', e => {
-  handleNavHover(e, 1);
-});
 
 // sticky nav bar => intersection observer API
 const header = document.querySelector('.header');
@@ -297,5 +310,6 @@ function App() {
   ModalComponent.init();
   SmoothScrollComponent.init();
   TabComponent.init();
+  NavFadeComponent.init();
 }
 App();
