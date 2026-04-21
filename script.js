@@ -172,7 +172,7 @@ const StickyNavBarComponent = (function () {
     if (!nav || !header) return;
     const navHeight = nav.getBoundingClientRect().height;
 
-    const observer = new IntersectionObserver(stickyNav, {
+    const observer = new IntersectionObserver(onHeaderLeave, {
       root: null,
       threshold: 0,
       rootMargin: `-${navHeight}px`,
@@ -213,6 +213,45 @@ const SectionRevealComponent = (function () {
     allSections.forEach(function (section) {
       section.classList.add('section--hidden');
       observer.observe(section);
+    });
+  }
+
+  return { init };
+})();
+
+//===================================
+// LAZYLOADING COMPONENT
+//===================================
+
+const LazyLoadComponent = (function () {
+  // Element
+  const lazyImage = document.querySelectorAll('img[data-src]');
+
+  function onImageVisible(enteries, observer) {
+    const enter = enteries[0];
+    // replacing src with data-src
+    if (!enter.isIntersecting) return;
+    // console.log(enter);
+    enter.target.src = enter.target.dataset.src;
+
+    enter.target.addEventListener('load', function () {
+      enter.target.classList.remove('lazy-img');
+    });
+
+    observer.unobserve(enter.target);
+  }
+
+  function init() {
+    if (!lazyImage.length) return;
+
+    const observer = new IntersectionObserver(onImageVisible, {
+      root: null,
+      threshold: 0.15,
+      rootMargin: '200px',
+    });
+
+    lazyImage.forEach(function (img) {
+      observer.observe(img);
     });
   }
 
@@ -303,27 +342,6 @@ const sliderComponent = () => {
 
 sliderComponent();
 
-// reveal section
-
-// lazy loading image
-const allImg = document.querySelectorAll('img[data-src]');
-
-const lazyImg = (enteries, observer) => {
-  const [enter] = enteries;
-  // replacing src with data-src
-  if (!enter.isIntersecting) return;
-  // console.log(enter);
-  enter.target.src = enter.target.dataset.src;
-
-  enter.target.addEventListener('load', function () {
-    enter.target.classList.remove('lazy-img');
-  });
-
-  observer.unobserve(enter.target);
-};
-
-allImg.forEach(img => imgObserver.observe(img));
-
 //===================================
 // APP - signle entry point that start everything
 //===================================
@@ -334,5 +352,6 @@ function App() {
   NavFadeComponent.init();
   StickyNavBarComponent.init();
   SectionRevealComponent.init();
+  LazyLoadComponent.init();
 }
 App();
