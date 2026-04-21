@@ -182,6 +182,43 @@ const StickyNavBarComponent = (function () {
 
   return { init };
 })();
+
+//===================================
+// SECTION REVELING COMPONENT
+//===================================
+
+const SectionRevealComponent = (function () {
+  const allSections = document.querySelectorAll('.section');
+
+  function onSectionVisible(entries, observer) {
+    const enter = entries[0];
+    // console.log("enter:",enter);
+
+    if (!enter.isIntersecting) return;
+
+    enter.target.classList.remove('section--hidden');
+
+    observer.unobserve(enter.target);
+  }
+
+  function init() {
+    if (!allSections.length) return;
+
+    const observer = new IntersectionObserver(onSectionVisible, {
+      root: null,
+      threshold: 0.15,
+      rootMargin: '200px',
+    });
+
+    allSections.forEach(function (section) {
+      section.classList.add('section--hidden');
+      observer.observe(section);
+    });
+  }
+
+  return { init };
+})();
+
 // Slider components
 
 const sliderComponent = () => {
@@ -266,38 +303,7 @@ const sliderComponent = () => {
 
 sliderComponent();
 
-// menu fade animation
-
-const stickyNav = entries => {
-  const [enter] = entries;
-  // console.log(enter);
-  if (!enter.isIntersecting) nav.classList.add('sticky');
-  else nav.classList.remove('sticky');
-};
-
 // reveal section
-const allSection = document.querySelectorAll('.section');
-
-const revealSection = (entries, observer) => {
-  const [enter] = entries;
-  // console.log("enter:",enter);
-
-  if (!enter.isIntersecting) return;
-
-  enter.target.classList.remove('section--hidden');
-
-  observer.unobserve(enter.target);
-};
-
-const sectionObserver = new IntersectionObserver(revealSection, {
-  root: null,
-  threshold: 0.15,
-});
-
-allSection.forEach(section => {
-  sectionObserver.observe(section);
-  section.classList.add('section--hidden');
-});
 
 // lazy loading image
 const allImg = document.querySelectorAll('img[data-src]');
@@ -316,12 +322,6 @@ const lazyImg = (enteries, observer) => {
   observer.unobserve(enter.target);
 };
 
-const imgObserver = new IntersectionObserver(lazyImg, {
-  root: null,
-  threshold: 0.15,
-  rootMargin: '200px',
-});
-
 allImg.forEach(img => imgObserver.observe(img));
 
 //===================================
@@ -333,5 +333,6 @@ function App() {
   TabComponent.init();
   NavFadeComponent.init();
   StickyNavBarComponent.init();
+  SectionRevealComponent.init();
 }
 App();
